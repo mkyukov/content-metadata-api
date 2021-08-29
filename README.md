@@ -4,7 +4,7 @@ The following solution provides an API for retrieving Content Metadata for use i
 # Architecture
 The architecture is designed as follows:
 
-![Alt text](img/Architecture.png "a title")
+![Alt text](src/img/Architecture.png "a title")
 
 ## Consumer
 The consumer can be any web request capable client, be it another service, SPA web app or mobile app. 
