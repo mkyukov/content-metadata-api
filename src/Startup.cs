@@ -11,7 +11,7 @@ namespace MetadataEventApi
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddTransient<IMetadataProcessor,MetadataProcessor>();
+            builder.Services.AddTransient<ICosmosMetadataService,CosmosMetadataService>();
         }
     }
 }

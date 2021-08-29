@@ -10,7 +10,7 @@ namespace MetadataApi
     public static class MetadataApi
     {
         [FunctionName("content-metadata")]
-        public static async Task<IActionResult> Run(
+        public static IActionResult Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             [CosmosDB(databaseName: "ContentMetadataDb",
                 collectionName: "ContentMetadata",
