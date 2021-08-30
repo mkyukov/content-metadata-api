@@ -24,11 +24,11 @@ The Cosmos DB service takes care of persisting the metadata records associated w
 ## Metadata management
 The metadata management layer houses the services responsible for keeping the metadata fetched within the "Content Metadata API" layer up to date.
 
-### CRUD Function/s
+### CRUD Function/s - Metadata Event Processor
 Responsible for processing events from the event hub and executing the appropriate action for updating/deleting.
 
-### CMS
-Could be a WebApp running a dedicated CMS for managing the content data that is then compiled and stored in the CosmosDB.
+### CMS Cluster
+A cluster of WebApps running dedicated CMSs for managing the content data that is then emitted and stored in the CosmosDB.
 
 ### Event Hub
 Takes care of storing the emitted events from the CMS and relaying them to the Function/s resposible for updating the CosmosDB with the emitted data.
