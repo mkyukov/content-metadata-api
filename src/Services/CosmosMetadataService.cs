@@ -4,11 +4,19 @@ using System.Configuration;
 using System.Net;
 using Microsoft.Azure.Cosmos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace MetadataEventApi.Services
 {
     public class CosmosMetadataService : ICosmosMetadataService
     {
+        private readonly ILogger _logger;
+
+        public CosmosMetadataService(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<IActionResult> CreateContentMetadata(ContentMetadata metadata, Container container)
         {
             try
@@ -24,22 +32,55 @@ namespace MetadataEventApi.Services
                     return new ConflictObjectResult("This item already exists!");
                 } else
                 {
+                    _logger.LogError(ex, "There was an error creating a new ContentMetadata item in Cosmos DB!");
                     throw;
                 }
             }
         }
         public async Task<IActionResult> DeleteContentMetadata(ContentMetadata metadata, Container container)
         {
-            await container.DeleteItemAsync<ContentMetadata>(metadata.id, new PartitionKey(metadata.id));
+            try
+            {
+                await container.DeleteItemAsync<ContentMetadata>(metadata.id, new PartitionKey(metadata.id));
 
-            return new OkObjectResult("Item deleted successfully!");
+                return new OkObjectResult("Item deleted successfully!");
+            }
+            catch (CosmosException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return new ConflictObjectResult("Could not find the item to delete!");
+                }
+                else
+                {
+                    _logger.LogError(ex, "There was an error deleting a ContentMetadata item from Cosmos DB!");
+                    throw;
+                }
+            }
+            
         }      
 
         public async Task<IActionResult> UpdateContentMetadata(ContentMetadata metadata, Container container)
         {
-            await container.UpsertItemAsync<ContentMetadata>(metadata, new PartitionKey(metadata.id));
+            try
+            {
+                await container.UpsertItemAsync<ContentMetadata>(metadata, new PartitionKey(metadata.id));
 
-            return new OkObjectResult("Item updated successfully!");
+                return new OkObjectResult("Item updated successfully!");
+            }
+            catch (CosmosException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return new ConflictObjectResult("Could not find the item to update!");
+                }
+                else
+                {
+                    _logger.LogError(ex, "There was an error updating the ContentMetadata item in Cosmos DB!");
+                    throw;
+                }
+            }
+
         }
     }
 }
